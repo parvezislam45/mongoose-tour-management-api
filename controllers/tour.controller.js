@@ -27,7 +27,7 @@ exports.getTours = async (req, res, next) => {
     //Filters Ends
     //---------------------------------------------------------------------------------------------
 
-    
+
     //Query Starts
 
     const queries = {};
@@ -51,6 +51,7 @@ exports.getTours = async (req, res, next) => {
       const skip = (page - 1) * parseInt(limit);
       queries.skip = skip;
       queries.limit = parseInt(limit);
+      queries.page = Number(page);
     }
 
     if (!req.query.limit) {

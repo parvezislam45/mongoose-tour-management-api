@@ -7,10 +7,11 @@ exports.getToursService = async (filters, queries) => {
     .select(queries.fields)
     .sort(queries.sortBy);
 
-
-  const total = await Tour.countDocuments(filters);
-  const page = Math.ceil(total / queries.limit);
-  return { total, page, tours: tours };
+  const totalCounts = await Tour.countDocuments(filters);
+  const totalPages = Math.ceil(totalCounts / queries.limit);
+  const currentPage = queries.page;
+  const countsPerPage = tours.length;
+  return { totalCounts, countsPerPage, totalPages, currentPage, tours };
 };
 
 exports.createTourService = async (data) => {
@@ -27,7 +28,7 @@ exports.getTourByIdService = async (tourId) => {
 };
 
 exports.updateTourByIdService = async (tourId, data) => {
-    //upd
+  //upd
   const tour = await Tour.updateOne(
     { _id: tourId },
     { $set: data },
@@ -37,13 +38,13 @@ exports.updateTourByIdService = async (tourId, data) => {
 };
 
 exports.getTrendingToursService = async () => {
-    //get top 3 most views tours
-    const tours = await Tour.find().sort({ views: -1 }).limit(3);
-    return tours;
+  //get top 3 most views tours
+  const tours = await Tour.find().sort({ view: -1 }).limit(3);
+  return tours;
 };
 
 exports.getCheapestToursService = async () => {
-    //get top 3 cheapest tours
-    const tours = await Tour.find().sort({ price: 1 }).limit(3);
-    return tours;
+  //get top 3 cheapest tours
+  const tours = await Tour.find().sort({ price: 1 }).limit(3);
+  return tours;
 };
