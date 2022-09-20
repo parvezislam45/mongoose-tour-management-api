@@ -3,35 +3,31 @@ const {
   createTourService,
   getTourByIdService,
   updateTourByIdService,
- getCheapestToursService,
- getTrendingToursService
+  getCheapestToursService,
+  getTrendingToursService,
 } = require("../services/tour.services");
 
 exports.getTours = async (req, res, next) => {
   try {
     //Filters Starts
 
-    //{price:{$ gt:50}
-    //{ price: { gt: '50' } }
-    // console.log(req.query);
-
     let filters = { ...req.query };
 
-    //sort , page , limit -> excluding the query fields from filters
-    const excludeFields = ["sort", "page", "limit"];
+    const excludeFields = ["sort", "page", "limit", "fields"];
     excludeFields.forEach((field) => delete filters[field]);
 
-    //gt ,lt ,gte .lte, eq, neq
     let filtersString = JSON.stringify(filters);
     filtersString = filtersString.replace(
-      /\b(gt|gte|lt|lte|eq|neq)\b/g,
+      /\b(gt|gte|lt|lte|eq|ne)\b/g,
       (match) => `$${match}`
     );
 
     filters = JSON.parse(filtersString);
 
     //Filters Ends
+    //---------------------------------------------------------------------------------------------
 
+    
     //Query Starts
 
     const queries = {};
@@ -41,14 +37,12 @@ exports.getTours = async (req, res, next) => {
       // price,qunatity   -> 'price quantity'
       const sortBy = req.query.sort.split(",").join(" ");
       queries.sortBy = sortBy;
-      // console.log(sortBy);
     }
 
     //fields query
     if (req.query.fields) {
       const fields = req.query.fields.split(",").join(" ");
       queries.fields = fields;
-      // console.log(fields);
     }
 
     //page query
@@ -59,10 +53,10 @@ exports.getTours = async (req, res, next) => {
       queries.limit = parseInt(limit);
     }
 
-    if(!req.query.limit){
+    if (!req.query.limit) {
       queries.limit = 10;
     }
-    if(!req.query.page){
+    if (!req.query.page) {
       queries.page = 1;
     }
 
